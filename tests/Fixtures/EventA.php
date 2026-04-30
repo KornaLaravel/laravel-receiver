@@ -4,14 +4,11 @@ namespace Receiver\Tests\Fixtures;
 
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class FooBarred
+class EventA
 {
     use Dispatchable;
 
     public function __construct(public string $event, public array $data) {}
 
-    public function handle()
-    {
-        //
-    }
+    public function handle(): void {}
 }

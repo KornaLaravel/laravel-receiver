@@ -10,17 +10,19 @@ use Receiver\Providers\AbstractProvider;
 use Receiver\Providers\FakeProvider;
 use Receiver\Providers\GithubProvider;
 use Receiver\Providers\HubspotProvider;
+use Receiver\Providers\MailchimpProvider;
+use Receiver\Providers\PaddleProvider;
 use Receiver\Providers\PostmarkProvider;
+use Receiver\Providers\SendGridProvider;
+use Receiver\Providers\ShopifyProvider;
 use Receiver\Providers\SlackProvider;
 use Receiver\Providers\StripeProvider;
+use Receiver\Providers\TwilioProvider;
 
 class ReceiverManager extends Manager implements Factory
 {
     /**
      * Get a driver instance.
-     *
-     * @param string $driver
-     * @return mixed
      */
     public function with(string $driver): mixed
     {
@@ -104,13 +106,69 @@ class ReceiverManager extends Manager implements Factory
     }
 
     /**
+     * Create an instance of the specified driver.
+     */
+    protected function createShopifyDriver(): ShopifyProvider
+    {
+        return $this->buildProvider(
+            ShopifyProvider::class,
+            $this->config->get('services.shopify')
+        );
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     */
+    protected function createTwilioDriver(): TwilioProvider
+    {
+        return $this->buildProvider(
+            TwilioProvider::class,
+            $this->config->get('services.twilio')
+        );
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     */
+    protected function createMailchimpDriver(): MailchimpProvider
+    {
+        return $this->buildProvider(
+            MailchimpProvider::class,
+            $this->config->get('services.mailchimp')
+        );
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     */
+    protected function createSendgridDriver(): SendGridProvider
+    {
+        return $this->buildProvider(
+            SendGridProvider::class,
+            $this->config->get('services.sendgrid')
+        );
+    }
+
+    /**
+     * Create an instance of the specified driver.
+     */
+    protected function createPaddleDriver(): PaddleProvider
+    {
+        return $this->buildProvider(
+            PaddleProvider::class,
+            $this->config->get('services.paddle')
+        );
+    }
+
+    /**
      * Build a webhook provider instance.
      *
-     * @param string $provider
-     * @param array $config
-     * @return AbstractProvider
+     * @template T of AbstractProvider
+     *
+     * @param  class-string<T>  $provider
+     * @return T
      */
-    public function buildProvider(string $provider, array $config): Providers\AbstractProvider
+    public function buildProvider(string $provider, array $config): AbstractProvider
     {
         return new $provider(
             Arr::get($config, 'webhook_secret')
@@ -134,7 +192,7 @@ class ReceiverManager extends Manager implements Factory
      *
      * @return string
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getDefaultDriver()
     {

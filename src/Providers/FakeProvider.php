@@ -7,18 +7,13 @@ use Illuminate\Http\Request;
 class FakeProvider extends AbstractProvider
 {
     /**
-     * @param Request $request
      * @return string
      */
-    public function getEvent(Request $request): string
+    public function getEvent(Request $request): string|array
     {
         return $request->input('type', 'fake');
     }
 
-    /**
-     * @param Request $request
-     * @return array
-     */
     public function getData(Request $request): array
     {
         return $request->input('data', []);
